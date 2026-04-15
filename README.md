@@ -77,7 +77,7 @@ just argocd-password  # print the initial admin password
 
 ```
 Wave -2  namespaces
-Wave -1  local-path-provisioner, sealed-secrets, metallb-bootstrap
+Wave -1  local-path-provisioner, sealed-secrets
 Wave  0  metallb
 Wave  1  metallb-config
 Wave  2  cert-manager
