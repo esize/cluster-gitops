@@ -43,8 +43,8 @@ get-cert:
       > {{cert_file}}
     @echo "Certificate saved to {{cert_file}}"
 
-# Seal all secrets (requires CF_TOKEN, RUNNER_TOKEN, RENOVATE_TOKEN, OMNI_CLIENT_SECRET env vars)
-seal-secrets: seal-cloudflare seal-runner seal-renovate seal-omni
+# Seal all secrets (requires CF_TOKEN, RUNNER_TOKEN, RENOVATE_TOKEN, OMNI_CLIENT_SECRET, AUTHENTIK_SECRET_KEY, AUTHENTIK_BOOTSTRAP_PASSWORD, AUTHENTIK_BOOTSTRAP_TOKEN env vars)
+seal-secrets: seal-cloudflare seal-runner seal-renovate seal-omni seal-authentik
     @echo "All secrets sealed — commit the sealed YAML files."
 
 # Seal Cloudflare API token  (CF_TOKEN=<token>)
@@ -94,6 +94,22 @@ seal-omni client_secret=env_var_or_default("OMNI_CLIENT_SECRET", ""):
     | {{kubeseal}} --cert {{cert_file}} --format yaml \
     > services/omni/omni-oidc-sealed.yaml
     echo "Sealed: services/omni/omni-oidc-sealed.yaml"
+
+# Seal Authentik secrets  (AUTHENTIK_SECRET_KEY=<key> AUTHENTIK_BOOTSTRAP_PASSWORD=<pw> AUTHENTIK_BOOTSTRAP_TOKEN=<token>)
+seal-authentik secret_key=env_var_or_default("AUTHENTIK_SECRET_KEY", "") bootstrap_password=env_var_or_default("AUTHENTIK_BOOTSTRAP_PASSWORD", "") bootstrap_token=env_var_or_default("AUTHENTIK_BOOTSTRAP_TOKEN", ""):
+    #!/usr/bin/env bash
+    if [ -z "{{secret_key}}" ]; then echo "AUTHENTIK_SECRET_KEY is required"; exit 1; fi
+    if [ -z "{{bootstrap_password}}" ]; then echo "AUTHENTIK_BOOTSTRAP_PASSWORD is required"; exit 1; fi
+    if [ -z "{{bootstrap_token}}" ]; then echo "AUTHENTIK_BOOTSTRAP_TOKEN is required"; exit 1; fi
+    kubectl create secret generic authentik-secrets \
+      --namespace=authentik \
+      --from-literal=secret-key={{secret_key}} \
+      --from-literal=bootstrap-password={{bootstrap_password}} \
+      --from-literal=bootstrap-token={{bootstrap_token}} \
+      --dry-run=client -o yaml \
+    | {{kubeseal}} --cert {{cert_file}} --format yaml \
+    > services/authentik/authentik-secrets-sealed.yaml
+    echo "Sealed: services/authentik/authentik-secrets-sealed.yaml"
 
 # ── Git hooks ─────────────────────────────────────────────────────────────────
 

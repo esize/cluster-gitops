@@ -25,6 +25,7 @@ Kubernetes Secret (decrypted by controller at runtime)
 | `forgejo-runner-token` | `forgejo-runners` | `services/forgejo-runners/runner-token-sealed.yaml` | `just seal-runner RUNNER_TOKEN=xxx` |
 | `renovate-token` | `renovate` | `services/renovate/renovate-token-sealed.yaml` | `just seal-renovate RENOVATE_TOKEN=xxx` |
 | `omni-oidc` | `omni` | `services/omni/omni-oidc-sealed.yaml` | `just seal-omni OMNI_CLIENT_SECRET=xxx` |
+| `authentik-secrets` | `authentik` | `services/authentik/authentik-secrets-sealed.yaml` | `just seal-authentik AUTHENTIK_SECRET_KEY=xxx AUTHENTIK_BOOTSTRAP_PASSWORD=xxx AUTHENTIK_BOOTSTRAP_TOKEN=xxx` |
 
 ## Getting the Sealing Certificate
 
