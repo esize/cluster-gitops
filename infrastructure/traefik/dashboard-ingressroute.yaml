@@ -15,4 +15,7 @@ spec:
       services:
         - name: api@internal
           kind: TraefikService
-  tls: {}
+  tls:
+    store:
+      name: default
+      namespace: traefik

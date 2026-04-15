@@ -15,7 +15,10 @@ spec:
       services:
         - name: argocd-server
           port: 80
-  tls: {}
+  tls:
+    store:
+      name: default
+      namespace: traefik
 ---
 # Tell ArgoCD it's behind a reverse proxy so it doesn't redirect to HTTPS itself
 apiVersion: v1
