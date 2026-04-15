@@ -123,4 +123,4 @@ diff:
 
 # Watch ArgoCD application sync status
 watch:
-    watch kubectl -n argocd get applications
+    kubectl -n argocd get applications -w
