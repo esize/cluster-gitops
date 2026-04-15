@@ -11,7 +11,7 @@ spec:
   project: default
   sources:
     # Forgejo Helm chart (OCI from Codeberg)
-    - repoURL: oci://code.forgejo.org/forgejo-helm
+    - repoURL: code.forgejo.org/forgejo-helm
       chart: forgejo
       targetRevision: "16.2.2"
       helm:
