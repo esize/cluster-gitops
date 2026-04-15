@@ -16,7 +16,7 @@ stringData:
   #          sshPrivateKey: |
   #            -----BEGIN OPENSSH PRIVATE KEY-----
   #            ...
-  url: REPLACE_WITH_REPO_URL
+  url: https://github.com/esize/cluster-gitops.git
 ---
 # Forgejo Helm chart (OCI from Codeberg)
 apiVersion: v1

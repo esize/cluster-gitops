@@ -19,7 +19,7 @@ spec:
         valueFiles:
           - $values/services/forgejo/values.yaml
     # Values file from gitops repo
-    - repoURL: REPLACE_WITH_REPO_URL
+    - repoURL: https://github.com/esize/cluster-gitops.git
       targetRevision: HEAD
       ref: values
   destination:

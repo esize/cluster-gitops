@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     # Replace with your actual repo URL
-    repoURL: REPLACE_WITH_REPO_URL
+    repoURL: https://github.com/esize/cluster-gitops.git
     targetRevision: HEAD
     path: apps
   destination:
