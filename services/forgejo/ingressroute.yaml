@@ -15,4 +15,7 @@ spec:
       services:
         - name: forgejo-http
           port: 3000
-  tls: {}
+  tls:
+    store:
+      name: default
+      namespace: traefik
