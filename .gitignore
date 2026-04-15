@@ -21,3 +21,4 @@ pub-cert.pem
 .DS_Store
 *.swp
 *.swo
+.claude/*
