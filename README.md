@@ -30,57 +30,47 @@ GitOps repository for `cluster.wool.homes` — a 3-node Talos Linux cluster mana
 
 ## Bootstrap (one-time)
 
-> **Prerequisites:** `kubectl`, `kubeseal`, `age-keygen` installed and kubeconfig pointing at your cluster.
+> **Prerequisites:** `kubectl`, `kubeseal`, and `just` installed. Kubeconfig pointing at your cluster.
 
-### 1. Update the repo URL
-
-Edit `bootstrap/root-app.yaml` and replace `REPLACE_WITH_REPO_URL` with your actual git repo URL.
-
-### 2. Install ArgoCD
+### 1. Set the repo URL
 
 ```bash
-kubectl apply -f bootstrap/argocd-namespace.yaml
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
+just set-repo-url https://github.com/esize/cluster-gitops.git
 ```
 
-### 3. Register repositories in ArgoCD
+### 2. Install ArgoCD and apply the root app
 
 ```bash
-kubectl apply -f bootstrap/argocd-repos.yaml
+just bootstrap-argocd
 ```
 
-### 4. Create and seal secrets
+### 3. Seal the Cloudflare API token
 
-See [secrets/README.md](secrets/README.md) for full instructions. Quick start:
+Once `sealed-secrets` is running (wave -1), fetch the cert and seal your token:
 
 ```bash
-# Get the Sealed Secrets public key (after sealed-secrets is running):
-kubeseal --fetch-cert --controller-name=sealed-secrets --controller-namespace=sealed-secrets > pub-cert.pem
-
-# Seal the Cloudflare API token:
-kubectl create secret generic cloudflare-api-token \
-  --namespace=cert-manager \
-  --from-literal=api-token=YOUR_CF_TOKEN \
-  --dry-run=client -o yaml \
-  | kubeseal --cert pub-cert.pem --format yaml \
-  > infrastructure/cert-manager/cloudflare-api-token-sealed.yaml
+just get-cert
+just seal-cloudflare CF_TOKEN=<your-cloudflare-api-token>
 ```
 
-See the `secrets/*.example` files for all required secrets and the `Makefile` for helper targets.
+Commit and push the sealed file — ArgoCD picks it up automatically.
 
-### 5. Apply the root app
+### 4. Seal remaining secrets (after Forgejo is running)
 
 ```bash
-kubectl apply -f bootstrap/root-app.yaml
+just seal-runner   RUNNER_TOKEN=<forgejo-runner-registration-token>
+just seal-renovate RENOVATE_TOKEN=<forgejo-access-token>
+just seal-omni     OMNI_CLIENT_SECRET=<oidc-client-secret>
 ```
 
-ArgoCD will now reconcile everything in waves. Monitor progress:
+Commit and push each one as you go.
+
+### 5. Monitor sync progress
 
 ```bash
-kubectl -n argocd get applications -w
-# or port-forward the ArgoCD UI:
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+just watch          # watch all applications
+just argocd-ui      # port-forward ArgoCD to localhost:8080
+just argocd-password  # print the initial admin password
 ```
 
 ## Sync Wave Order
@@ -94,7 +84,7 @@ Wave  2  cert-manager
 Wave  3  cert-manager-config  (ClusterIssuers + Cloudflare secret)
 Wave  4  cert-manager-certs   (wildcard cert), traefik
 Wave  5  traefik-config, argocd-config
-Wave  6  forgejo, omni
+Wave  6  forgejo, forgejo-config, omni
 Wave  7  renovate
 Wave  8  forgejo-runners
 ```
@@ -102,9 +92,9 @@ Wave  8  forgejo-runners
 ## Secret Management
 
 Secrets are encrypted with [Bitnami Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets).
-Plaintext secret templates live in `secrets/*.example`. Sealed versions are committed to the repo.
+Plaintext secrets stay local only. Sealed versions are committed to the repo.
 
-See [secrets/README.md](secrets/README.md).
+See [secrets/README.md](secrets/README.md) and `just --list` for all available commands.
 
 ## Directory Structure
 
@@ -114,5 +104,5 @@ See [secrets/README.md](secrets/README.md).
 ├── apps/               ArgoCD Application definitions (App of Apps)
 ├── infrastructure/     Helm values + CRD configs for infrastructure
 ├── services/           Application deployments
-└── secrets/            Secret templates (examples only — not committed)
+└── secrets/            Secret templates (gitignored — never committed)
 ```
