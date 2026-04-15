@@ -1,14 +1,23 @@
-# Secrets (never commit plaintext secrets)
+# ── Secrets ───────────────────────────────────────────────────────────────────
+# The secrets/ directory is for local plaintext working files only — never committed.
+# Sealed secrets (*-sealed.yaml) live in infrastructure/ and services/ and ARE committed.
 secrets/*.yaml
 !secrets/*.example
 !secrets/.gitignore
+!secrets/README.md
 
-# Local overrides
+# Sealed Secrets controller backup (contains the private key — keep offline)
+sealed-secrets-master-key-*.yaml
+
+# Sealing certificate (public — safe to commit if desired, but not required)
+pub-cert.pem
+
+# ── Local overrides ───────────────────────────────────────────────────────────
 *.local
 .env
 .env.*
 
-# Editor
+# ── Editor ────────────────────────────────────────────────────────────────────
 .DS_Store
 *.swp
 *.swo

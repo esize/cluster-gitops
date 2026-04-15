@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Pre-commit hook: blocks plain Kubernetes Secrets from being committed.
+# Sealed secrets (kind: SealedSecret) are allowed — they are safe to commit.
+#
+# Install once with: just install-hooks
+set -euo pipefail
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+STAGED_YAML=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.ya?ml$' || true)
+
+if [ -z "$STAGED_YAML" ]; then
+  exit 0
+fi
+
+ERRORS=0
+
+for file in $STAGED_YAML; do
+  # Skip deleted files
+  [ -f "$file" ] || continue
+
+  # Reject any file that contains a plain Kubernetes Secret.
+  # We match apiVersion + kind together to avoid false positives in comments/docs.
+  if grep -qE '^kind: Secret$' "$file"; then
+    # Allow if it's inside a SealedSecret template (spec.template.metadata)
+    # by checking the file is actually a SealedSecret at the top level
+    if ! grep -qE '^kind: SealedSecret$' "$file"; then
+      echo -e "${RED}BLOCKED${NC} plain Secret in staged file: ${YELLOW}${file}${NC}"
+      echo "        Seal it first:  just seal-<name>  (see: just --list)"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Warn if a *-sealed.yaml file still contains the placeholder value
+  if [[ "$file" == *-sealed.yaml ]]; then
+    if grep -q 'REPLACE_WITH_SEALED_VALUE' "$file"; then
+      echo -e "${RED}BLOCKED${NC} unsealed placeholder in: ${YELLOW}${file}${NC}"
+      echo "        Replace the placeholder by running the appropriate seal-* recipe."
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+done
+
+if [ "$ERRORS" -ne 0 ]; then
+  echo ""
+  echo -e "${RED}Commit rejected:${NC} $ERRORS secret issue(s) found."
+  echo "Run 'just --list' to see sealing commands."
+  exit 1
+fi

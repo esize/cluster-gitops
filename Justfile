@@ -20,7 +20,7 @@ set-repo-url url:
 # ── Bootstrap ──────────────────────────────────────────────────────────────────
 
 # Full bootstrap: install ArgoCD, register repos, apply root app
-bootstrap: bootstrap-argocd
+bootstrap: install-hooks bootstrap-argocd
     @echo "Waiting for sealed-secrets to be ready..."
     kubectl wait --for=condition=available --timeout=300s deployment/sealed-secrets -n sealed-secrets
     @echo "Run: just get-cert  then  just seal-secrets"
@@ -94,6 +94,13 @@ seal-omni client_secret=env_var_or_default("OMNI_CLIENT_SECRET", ""):
     | {{kubeseal}} --cert {{cert_file}} --format yaml \
     > services/omni/omni-oidc-sealed.yaml
     echo "Sealed: services/omni/omni-oidc-sealed.yaml"
+
+# ── Git hooks ─────────────────────────────────────────────────────────────────
+
+# Configure git to use the repo's .githooks directory (run once after cloning)
+install-hooks:
+    git config core.hooksPath .githooks
+    @echo "Git hooks installed from .githooks/"
 
 # ── Utilities ──────────────────────────────────────────────────────────────────
 
