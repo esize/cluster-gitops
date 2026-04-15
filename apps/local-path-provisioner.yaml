@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://swissmakers.github.io/helm-charts
+    repoURL: https://charts.containeroo.ch
     chart: local-path-provisioner
     targetRevision: "0.0.31"
     helm:
