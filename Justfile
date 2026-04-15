@@ -28,7 +28,7 @@ bootstrap: bootstrap-argocd
 # Install ArgoCD and apply root app
 bootstrap-argocd:
     kubectl apply -f bootstrap/argocd-namespace.yaml
-    kubectl apply -n argocd --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
     kubectl apply -f bootstrap/argocd-repos.yaml
     kubectl apply -f bootstrap/root-app.yaml
