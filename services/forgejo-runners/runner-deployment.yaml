@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-runner-config
+  namespace: forgejo-runners
+data:
+  config.yaml: |
+    log:
+      level: info
+    runner:
+      file: .runner
+      capacity: 3
+      envs: {}
+      timeout: 3h
+      insecure: false
+    cache:
+      enabled: true
+      dir: /tmp/cache
+    container:
+      network: bridge
+      privileged: false
+      options:
+      valid_volumes: []
+    host:
+      workdir_parent:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgejo-runner
+  namespace: forgejo-runners
+  labels:
+    app: forgejo-runner
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: forgejo-runner
+  template:
+    metadata:
+      labels:
+        app: forgejo-runner
+    spec:
+      restartPolicy: Always
+      initContainers:
+        # Register the runner on first start; noop if already registered
+        - name: register
+          image: code.forgejo.org/forgejo/runner:6.3.0
+          command:
+            - forgejo-runner
+            - register
+            - --no-interactive
+            - --instance
+            - https://forgejo.cluster.wool.homes
+            - --token
+            - $(RUNNER_TOKEN)
+            - --name
+            - $(POD_NAME)
+            - --labels
+            - ubuntu-latest:docker://node:20-bookworm,ubuntu-22.04:docker://node:20-bookworm
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RUNNER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: forgejo-runner-token
+                  key: token
+          volumeMounts:
+            - name: runner-data
+              mountPath: /data
+      containers:
+        - name: runner
+          image: code.forgejo.org/forgejo/runner:6.3.0
+          command:
+            - forgejo-runner
+            - daemon
+          env:
+            - name: HOME
+              value: /data
+          volumeMounts:
+            - name: runner-data
+              mountPath: /data
+            - name: runner-config
+              mountPath: /data/config.yaml
+              subPath: config.yaml
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+      volumes:
+        - name: runner-data
+          emptyDir: {}
+        - name: runner-config
+          configMap:
+            name: forgejo-runner-config
+        # Requires Docker on the host nodes — for Talos, use dind sidecar instead
+        # See: https://forgejo.org/docs/latest/admin/actions/
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock

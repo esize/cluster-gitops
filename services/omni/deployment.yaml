@@ -1,0 +1,97 @@
+# Omni — Sidero Labs Talos management plane (self-hosted / CE)
+# Docs: https://omni.siderolabs.com/docs/self-hosted/
+#
+# Before applying:
+#   1. Accept the BSL license at https://omni.siderolabs.com/docs/self-hosted/
+#   2. Create a Forgejo OAuth2 app with redirect URI https://omni.cluster.wool.homes/oidc-callback
+#   3. Seal the client secret: just seal-omni OMNI_CLIENT_SECRET=<secret>
+#   4. Update OMNI_OIDC_CLIENT_ID below with your Forgejo app's client ID
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omni
+  namespace: omni
+  labels:
+    app: omni
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: omni
+  template:
+    metadata:
+      labels:
+        app: omni
+    spec:
+      containers:
+        - name: omni
+          image: ghcr.io/siderolabs/omni:latest
+          args:
+            - --account-id=onprem-cluster
+            - --name=cluster.wool.homes
+            - --private-key-source=file:///secrets/omni.asc
+            - --event-sink-port=8091
+            - --bind-addr=0.0.0.0:443
+            - --advertised-api-url=https://omni.cluster.wool.homes/
+            - --advertised-kubernetes-proxy-url=https://omni.cluster.wool.homes/
+            - --sid-link-generator-url=https://omni.cluster.wool.homes/
+            - --auth-auth0-enabled=false
+            - --auth-oidc-enabled=true
+            - --auth-oidc-issuer-url=https://forgejo.cluster.wool.homes/
+            - --auth-oidc-client-id=$(OIDC_CLIENT_ID)
+            - --auth-oidc-client-secret=$(OIDC_CLIENT_SECRET)
+            - --initial-users=admin@wool.homes
+            - --storage-path=/data
+            - --etcd-embedded-unsafe-fsync=true
+          env:
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: omni-oidc
+                  key: client-secret
+            - name: OIDC_CLIENT_ID
+              # Replace with the Client ID from your Forgejo OAuth2 app
+              value: REPLACE_WITH_OIDC_CLIENT_ID
+          ports:
+            - name: https
+              containerPort: 443
+            - name: grpc
+              containerPort: 8090
+            - name: event-sink
+              containerPort: 8091
+            - name: k8s-proxy
+              containerPort: 8100
+          volumeMounts:
+            - name: omni-data
+              mountPath: /data
+            - name: omni-key
+              mountPath: /secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+      volumes:
+        - name: omni-data
+          persistentVolumeClaim:
+            claimName: omni-data
+        - name: omni-key
+          secret:
+            secretName: omni-gpg-key
+---
+# Generate with: gpg --batch --gen-key <(echo "Key-Type: RSA\nKey-Length: 4096\nSubkey-Type: RSA\nSubkey-Length: 4096\nName-Real: Omni\nExpire-Date: 0\n%no-passphrase") && gpg --armor --export-secret-keys Omni | kubectl create secret generic omni-gpg-key --namespace omni --from-file=omni.asc=/dev/stdin
+# See: https://omni.siderolabs.com/docs/self-hosted/
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: omni-data
+  namespace: omni
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

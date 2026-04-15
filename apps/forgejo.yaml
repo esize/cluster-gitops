@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: forgejo
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    # Forgejo Helm chart (OCI from Codeberg)
+    - repoURL: oci://codeberg.org/forgejo-helm
+      chart: forgejo
+      targetRevision: "11.0.3"
+      helm:
+        releaseName: forgejo
+        valueFiles:
+          - $values/services/forgejo/values.yaml
+    # Values file from gitops repo
+    - repoURL: REPLACE_WITH_REPO_URL
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: forgejo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m

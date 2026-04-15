@@ -1,0 +1,29 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: omni
+  namespace: omni
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`omni.cluster.wool.homes`)
+      kind: Rule
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+      services:
+        - name: omni
+          port: 443
+          scheme: https
+          serversTransport: omni-transport
+  tls: {}
+---
+# Skip TLS verification for Omni's self-signed backend cert
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: omni-transport
+  namespace: omni
+spec:
+  insecureSkipVerify: true

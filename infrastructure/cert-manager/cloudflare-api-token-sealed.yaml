@@ -1,0 +1,19 @@
+# PLACEHOLDER — replace with a real SealedSecret before committing.
+#
+# Generate with:
+#   just seal-cloudflare CF_TOKEN=<your-cloudflare-api-token>
+#
+# The Cloudflare API token needs Zone:Read + DNS:Edit permissions for wool.homes.
+#
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudflare-api-token
+  namespace: cert-manager
+spec:
+  encryptedData:
+    api-token: REPLACE_WITH_SEALED_VALUE
+  template:
+    metadata:
+      name: cloudflare-api-token
+      namespace: cert-manager

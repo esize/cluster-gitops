@@ -1,0 +1,10 @@
+# Sets the wildcard cert as Traefik's default certificate for all HTTPS routes.
+# All IngressRoutes can use `tls: {}` and automatically get this cert.
+apiVersion: traefik.io/v1alpha1
+kind: TLSStore
+metadata:
+  name: default
+  namespace: traefik
+spec:
+  defaultCertificate:
+    secretName: wildcard-cluster-wool-homes-tls

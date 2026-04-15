@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renovate-config
+  namespace: renovate
+data:
+  config.json: |
+    {
+      "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+      "platform": "gitea",
+      "endpoint": "https://forgejo.cluster.wool.homes",
+      "gitAuthor": "Renovate Bot <renovate@wool.homes>",
+      "repositories": [
+        "admin/cluster-gitops"
+      ],
+      "extends": [
+        "config:recommended"
+      ],
+      "labels": ["renovate", "dependencies"],
+      "prConcurrentLimit": 5,
+      "prHourlyLimit": 2,
+      "automerge": false,
+      "packageRules": [
+        {
+          "description": "Automerge patch and minor updates for known-safe packages",
+          "matchUpdateTypes": ["patch"],
+          "matchPackagePatterns": ["*"],
+          "automerge": true
+        }
+      ],
+      "helm-values": {
+        "enabled": true
+      },
+      "argocd": {
+        "enabled": true,
+        "fileMatch": ["apps/.+\\.yaml$"]
+      },
+      "kubernetes": {
+        "enabled": true,
+        "fileMatch": ["services/.+\\.yaml$", "infrastructure/.+\\.yaml$"]
+      }
+    }

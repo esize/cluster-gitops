@@ -1,0 +1,19 @@
+# Wildcard TLS cert for *.cluster.wool.homes
+# Issued in the traefik namespace so Traefik can use it as the default cert.
+# Switch issuerRef.name to letsencrypt-prod once staging validates successfully.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-cluster-wool-homes
+  namespace: traefik
+spec:
+  secretName: wildcard-cluster-wool-homes-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - "cluster.wool.homes"
+    - "*.cluster.wool.homes"
+  privateKey:
+    algorithm: ECDSA
+    size: 256

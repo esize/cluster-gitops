@@ -1,0 +1,65 @@
+image:
+  repository: codeberg.org/forgejo/forgejo
+  tag: "10"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer
+    port: 22
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: "192.168.254.71"
+
+ingress:
+  enabled: false  # Using Traefik IngressRoute instead
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 20Gi
+
+gitea:
+  admin:
+    username: admin
+    # Set the admin password via Forgejo UI on first login.
+    # You can also pre-set via: password / existingSecret
+    email: admin@wool.homes
+
+  config:
+    server:
+      DOMAIN: forgejo.cluster.wool.homes
+      ROOT_URL: "https://forgejo.cluster.wool.homes"
+      SSH_DOMAIN: forgejo.cluster.wool.homes
+      SSH_PORT: 22
+      LFS_START_SERVER: "true"
+
+    database:
+      DB_TYPE: sqlite3
+
+    repository:
+      DEFAULT_BRANCH: main
+
+    service:
+      DISABLE_REGISTRATION: "false"  # Set to true after creating your account
+      REQUIRE_SIGNIN_VIEW: "false"
+
+    actions:
+      ENABLED: "true"
+
+  # Disable bundled Postgres and Redis — using SQLite for homelab simplicity
+postgresql-ha:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+redis-cluster:
+  enabled: false
+
+redis:
+  enabled: false

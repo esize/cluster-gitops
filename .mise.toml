@@ -1,0 +1,9 @@
+[tools]
+kubectl = "latest"
+kubeseal = "latest"
+# Install 'just' command runner
+"cargo:just" = "latest"
+
+[env]
+# Convenience: set your repo URL here and run `just set-repo-url`
+REPO_URL = "https://github.com/REPLACE_WITH_USERNAME/cluster-gitops.git"

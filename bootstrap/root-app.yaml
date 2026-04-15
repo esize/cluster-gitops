@@ -1,0 +1,25 @@
+# Root "App of Apps" — manages all ArgoCD Application resources in apps/.
+# Apply once after ArgoCD is running.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # Replace with your actual repo URL
+    repoURL: REPLACE_WITH_REPO_URL
+    targetRevision: HEAD
+    path: apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

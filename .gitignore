@@ -1,0 +1,14 @@
+# Secrets (never commit plaintext secrets)
+secrets/*.yaml
+!secrets/*.example
+!secrets/.gitignore
+
+# Local overrides
+*.local
+.env
+.env.*
+
+# Editor
+.DS_Store
+*.swp
+*.swo

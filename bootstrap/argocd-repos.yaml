@@ -1,0 +1,32 @@
+# Repository secrets for ArgoCD.
+# Update the cluster-gitops URL to your actual git remote before applying.
+---
+# Your cluster-gitops repo (HTTPS or SSH)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-cluster-gitops
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  # Replace with your actual repo URL, e.g. https://github.com/you/cluster-gitops.git
+  # For SSH: url: git@github.com:you/cluster-gitops.git
+  #          sshPrivateKey: |
+  #            -----BEGIN OPENSSH PRIVATE KEY-----
+  #            ...
+  url: REPLACE_WITH_REPO_URL
+---
+# Forgejo Helm chart (OCI from Codeberg)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-forgejo-helm
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  url: oci://codeberg.org/forgejo-helm
+  enableOCI: "true"

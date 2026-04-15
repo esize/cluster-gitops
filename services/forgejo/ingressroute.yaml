@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: forgejo
+  namespace: forgejo
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`forgejo.cluster.wool.homes`)
+      kind: Rule
+      middlewares:
+        - name: default-headers
+          namespace: traefik
+      services:
+        - name: forgejo-http
+          port: 3000
+  tls: {}
