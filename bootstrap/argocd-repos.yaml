@@ -18,7 +18,7 @@ stringData:
   #            ...
   url: https://github.com/esize/cluster-gitops.git
 ---
-# Forgejo Helm chart (OCI from Codeberg)
+# Forgejo Helm chart (OCI from code.forgejo.org)
 apiVersion: v1
 kind: Secret
 metadata:
@@ -28,5 +28,5 @@ metadata:
     argocd.argoproj.io/secret-type: repository
 stringData:
   type: helm
-  url: oci://codeberg.org/forgejo-helm
+  url: oci://code.forgejo.org/forgejo-helm
   enableOCI: "true"

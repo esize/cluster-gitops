@@ -1,8 +1,3 @@
-image:
-  repository: codeberg.org/forgejo/forgejo
-  tag: "10"
-  pullPolicy: IfNotPresent
-
 replicaCount: 1
 
 service:
