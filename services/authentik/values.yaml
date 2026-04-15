@@ -1,0 +1,48 @@
+authentik:
+  secret_key: "" # Provided via existingSecret
+  error_reporting:
+    enabled: false
+
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: secret-key
+    - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: bootstrap-password
+    - name: AUTHENTIK_BOOTSTRAP_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: bootstrap-token
+    - name: AUTHENTIK_BOOTSTRAP_EMAIL
+      value: admin@wool.homes
+
+server:
+  replicas: 1
+  ingress:
+    enabled: false # Using Traefik IngressRoute instead
+
+worker:
+  replicas: 1
+
+postgresql:
+  enabled: true
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 8Gi
+
+redis:
+  enabled: true
+  master:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 2Gi

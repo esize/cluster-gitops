@@ -46,4 +46,9 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: authentik
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: local-path-storage
