@@ -20,7 +20,7 @@ persistence:
 
 gitea:
   admin:
-    username: admin
+    username: gitadmin
     # Set the admin password via Forgejo UI on first login.
     # You can also pre-set via: password / existingSecret
     email: admin@wool.homes
