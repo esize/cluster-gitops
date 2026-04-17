@@ -57,7 +57,7 @@ spec:
             - --name
             - $(POD_NAME)
             - --labels
-            - ubuntu-latest:docker://node:20-bookworm,ubuntu-22.04:docker://node:20-bookworm
+            - ubuntu-latest:host,ubuntu-22.04:host
           env:
             - name: POD_NAME
               valueFrom:
@@ -86,8 +86,6 @@ spec:
             - name: runner-config
               mountPath: /data/config.yaml
               subPath: config.yaml
-            - name: docker-sock
-              mountPath: /var/run/docker.sock
           resources:
             requests:
               cpu: 100m
@@ -101,8 +99,3 @@ spec:
         - name: runner-config
           configMap:
             name: forgejo-runner-config
-        # Requires Docker on the host nodes — for Talos, use dind sidecar instead
-        # See: https://forgejo.org/docs/latest/admin/actions/
-        - name: docker-sock
-          hostPath:
-            path: /var/run/docker.sock
