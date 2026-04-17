@@ -1,0 +1,87 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: "83.6.0"
+    helm:
+      releaseName: kube-prometheus-stack
+      valuesObject:
+        grafana:
+          persistence:
+            enabled: true
+            storageClassName: local-path
+            accessModes:
+              - ReadWriteOnce
+            size: 10Gi
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+              traefik.ingress.kubernetes.io/router.middlewares: traefik-default-headers@kubernetescrd
+            hosts:
+              - grafana.cluster.wool.homes
+            path: /
+            pathType: Prefix
+          additionalDataSources:
+            - name: Loki
+              uid: loki
+              type: loki
+              access: proxy
+              url: http://loki-gateway.monitoring.svc.cluster.local
+              isDefault: false
+              jsonData:
+                maxLines: 1000
+
+        prometheus:
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+              traefik.ingress.kubernetes.io/router.middlewares: traefik-default-headers@kubernetescrd
+            hosts:
+              - prometheus.cluster.wool.homes
+            paths:
+              - /
+            pathType: Prefix
+          prometheusSpec:
+            retention: 15d
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: local-path
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 30Gi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
