@@ -31,3 +31,23 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   server.insecure: "true"
+---
+# Ensure argocd-server actually rolls and applies insecure mode behind Traefik.
+# Using an explicit env var here avoids relying on a manual pod restart after
+# argocd-cmd-params-cm changes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  template:
+    metadata:
+      annotations:
+        argocd-config/rollout: "server-insecure-true"
+    spec:
+      containers:
+        - name: argocd-server
+          env:
+            - name: ARGOCD_SERVER_INSECURE
+              value: "true"
