@@ -1,9 +1,4 @@
-# PLACEHOLDER — replace with a real SealedSecret before committing.
-#
-# 1. In Forgejo, go to: Settings → Applications → Access Tokens
-# 2. Create a token with repository read/write permissions
-# 3. Run: just seal-renovate RENOVATE_TOKEN=<token>
-#
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
@@ -11,7 +6,7 @@ metadata:
   namespace: renovate
 spec:
   encryptedData:
-    token: REPLACE_WITH_SEALED_VALUE
+    token: AgA2xKrTUK+umWs5QxyNTm8tBnicZSHUMdH1dmfd7FPeWwVf7k/dm1Ff6d3ekSMXsdg2/2NqI7JwOyLs2mSqYwAHybjE76H2TJkCMXgE38m3w6PwMKI/AUOd/wYsukbtvWKI9mbRfFNJco5hmopK+RH6/jeebOoiWuudZgbfp/Swh0LgL/1aHtcfcIZiADFF1OfmDbuHKuDe1Y3755Dfnrq4aApjX96dt0pZGApR+zD2w9SaJRYlYcRx/2Zbad/Gycy4w0/PYCYfuKXWJo8YyXPovKpJryVPwEE/KtJgh9y5/OsmEWZiBTOibfUKXqoeC05OzQYjDyfTutKwcc+xNvBG2ojW6YM6mX0dBjLmf9QG7MGbWHPglpelMVjSCaBo1kzxzFhGkeqwZDJSJGMT5KcigBy1b9livd6DVVz2HIMzsgum228QIvzOqjz0JCZsPHmCIbsS5tT0m9uLs23yRCCKCNy6YoqgQeR8uTAHEj9ZBXsF5XBTQDTklPowhdn5s+VKpKIMKcymr2YhwTAOLC/d/MJ5hJj1DzvcDbJAnQve4RNqNtvBYjroQACIM181Z3Uty+G08mPq+En5vyYna2SNeVBr/uwo3+rUPZQHL95ncc8D+up2qEcUD61LGX3+M2uAx2nCzeyNjBHHdB9S3o0hiVgYLFrnv0wP7YAEek8EBghfn6bfoI+C/Kvx42Btruan94uD24wGJqFMCFex1vPAR9qVJJzdOH8I0RuE9MAl1dbxpEwV1D2W
   template:
     metadata:
       name: renovate-token

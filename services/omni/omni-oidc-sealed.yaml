@@ -1,11 +1,4 @@
-# PLACEHOLDER — replace with a real SealedSecret before committing.
-#
-# Omni uses OIDC for authentication. Configure an OAuth2 app in Forgejo:
-#   Forgejo → Settings → Applications → OAuth2 Applications → Add
-#   Redirect URI: https://omni.cluster.wool.homes/oidc-callback
-#
-# Then run: just seal-omni OMNI_CLIENT_SECRET=<client-secret>
-#
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
@@ -13,7 +6,7 @@ metadata:
   namespace: omni
 spec:
   encryptedData:
-    client-secret: REPLACE_WITH_SEALED_VALUE
+    client-secret: AgCLZaiC0Zhf/qLL5g7dXkpVt8Dkj/W9WMVbZ4a+9+ghSynLfbfKvDTvD9loimT8vg7pnH02xnUxpKQRIvdvIHDNkVBAFYsb7SDEy2xbgIHfmg6q0LFWtVKpFDIVKcz2nTPuo4QoryAfgHpcAhMibYr2BnFsA4h6AG44AO0o+fgA9/j37pHfYR8HWXkaU6mQvkkBAABPL86QfIca9BDALr2702r42kN3OhPK6BxGo9sKoJ6MQ4xAHcJMlyruHhpjt5pW6f4flP/x64/87nVqgWlG6QYkc56FMFIDzpFsH1I6VId7QbRkh3LDY4diz13dTWv3M8z+uFc6+G25cVB9wmbrUIDOXq9/HIEDsL4KrURkenNiZET1HHXPmzk58rN3GQpTZt84qp2B/VD17I3lW4hGvOgKwPWByv6Yq3d5vKDQznDgwW9w2b8v70+vABNyL3fdgd0gGoSQ2ItMHrFe1ydrs7UYNcxAPoaYNM8ajumRkhkBMlPFc83TewAVH507F3JLLb7hdSFSUnV6FzF66uVCO3n01tweKWYlQ19CSovEiTfjDudEAyAW+FmHFTiGdCFVZn2WRke1Kis9mT/nn8YQlOlL5mzzRBjzSMMufy/P6P0i09EVGQOxPIlmkefUjK508E8sHSWfU8KC/XFXuaYEGgeFGjI1CmwmcZH/BqRYDuNnXqnbV3n7AppIUimxV8kgu+duYK+I0XCPsyt7VxPooDzij5qx7DifxSWQou6vDoRzpf4nyEeBvGag+iKXF5U6e6+ujRmP1A==
   template:
     metadata:
       name: omni-oidc

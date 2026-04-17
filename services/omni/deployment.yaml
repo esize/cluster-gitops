@@ -52,7 +52,7 @@ spec:
                   key: client-secret
             - name: OIDC_CLIENT_ID
               # Replace with the Client ID from your Forgejo OAuth2 app
-              value: REPLACE_WITH_OIDC_CLIENT_ID
+              value: 9424abf4-ec0d-4df0-a280-90d9f94deb8a
           ports:
             - name: https
               containerPort: 443
