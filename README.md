@@ -32,7 +32,7 @@ GitOps repository for `cluster.wool.homes` — a 3-node Talos Linux cluster mana
 
 > **Prerequisites:** `kubectl`, `kubeseal`, and `just` installed. Kubeconfig pointing at your cluster.
 >
-> **Talos storage note:** ensure workers have a writable mount at `/var/mnt/local-path-provisioner` (for example via `UserVolumeConfig`), since the Local Path Provisioner uses that path for dynamic PVCs.
+> **Talos storage note:** ensure workers have a writable mount at `/var/local-path-provisioner`, since the Local Path Provisioner uses that path for dynamic PVCs.
 
 ### 1. Set the repo URL
 
