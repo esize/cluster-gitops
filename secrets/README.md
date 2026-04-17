@@ -24,6 +24,7 @@ Kubernetes Secret (decrypted by controller at runtime)
 | `cloudflare-api-token` | `cert-manager` | `infrastructure/cert-manager/cloudflare-api-token-sealed.yaml` | `just seal-cloudflare CF_TOKEN=xxx` |
 | `forgejo-runner-token` | `forgejo-runners` | `services/forgejo-runners/runner-token-sealed.yaml` | `just seal-runner RUNNER_TOKEN=xxx` |
 | `renovate-token` | `renovate` | `services/renovate/renovate-token-sealed.yaml` | `just seal-renovate RENOVATE_TOKEN=xxx` |
+| `omni-gpg-key` | `omni` | `services/omni/omni-gpg-key-sealed.yaml` | `just seal-omni-gpg OMNI_GPG_KEY_FILE=/path/to/omni.asc` |
 | `omni-oidc` | `omni` | `services/omni/omni-oidc-sealed.yaml` | `just seal-omni OMNI_CLIENT_SECRET=xxx` |
 
 ## Getting the Sealing Certificate

@@ -62,6 +62,7 @@ Commit and push the sealed file — ArgoCD picks it up automatically.
 ```bash
 just seal-runner   RUNNER_TOKEN=<forgejo-runner-registration-token>
 just seal-renovate RENOVATE_TOKEN=<forgejo-access-token>
+just seal-omni-gpg OMNI_GPG_KEY_FILE=/path/to/omni.asc
 just seal-omni     OMNI_CLIENT_SECRET=<oidc-client-secret>
 ```
 

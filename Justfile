@@ -43,8 +43,8 @@ get-cert:
       > {{cert_file}}
     @echo "Certificate saved to {{cert_file}}"
 
-# Seal all secrets (requires CF_TOKEN, RUNNER_TOKEN, RENOVATE_TOKEN, OMNI_CLIENT_SECRET env vars)
-seal-secrets: seal-cloudflare seal-runner seal-renovate seal-omni
+# Seal all secrets (requires CF_TOKEN, RUNNER_TOKEN, RENOVATE_TOKEN, OMNI_GPG_KEY_FILE, OMNI_CLIENT_SECRET env vars)
+seal-secrets: seal-cloudflare seal-runner seal-renovate seal-omni-gpg seal-omni
     @echo "All secrets sealed — commit the sealed YAML files."
 
 # Seal Cloudflare API token  (CF_TOKEN=<token>)
@@ -82,6 +82,19 @@ seal-renovate renovate_token=env_var_or_default("RENOVATE_TOKEN", ""):
     | {{kubeseal}} --cert {{cert_file}} --format yaml \
     > services/renovate/renovate-token-sealed.yaml
     echo "Sealed: services/renovate/renovate-token-sealed.yaml"
+
+# Seal Omni GPG private key file  (OMNI_GPG_KEY_FILE=/path/to/omni.asc)
+seal-omni-gpg key_file=env_var_or_default("OMNI_GPG_KEY_FILE", ""):
+    #!/usr/bin/env bash
+    if [ -z "{{key_file}}" ]; then echo "OMNI_GPG_KEY_FILE is required"; exit 1; fi
+    if [ ! -f "{{key_file}}" ]; then echo "File not found: {{key_file}}"; exit 1; fi
+    kubectl create secret generic omni-gpg-key \
+      --namespace=omni \
+      --from-file=omni.asc={{key_file}} \
+      --dry-run=client -o yaml \
+    | {{kubeseal}} --cert {{cert_file}} --format yaml \
+    > services/omni/omni-gpg-key-sealed.yaml
+    echo "Sealed: services/omni/omni-gpg-key-sealed.yaml"
 
 # Seal Omni OIDC client secret  (OMNI_CLIENT_SECRET=<secret>)
 seal-omni client_secret=env_var_or_default("OMNI_CLIENT_SECRET", ""):

@@ -4,8 +4,9 @@
 # Before applying:
 #   1. Accept the BSL license at https://omni.siderolabs.com/docs/self-hosted/
 #   2. Create a Forgejo OAuth2 app with redirect URI https://omni.cluster.wool.homes/oidc-callback
-#   3. Seal the client secret: just seal-omni OMNI_CLIENT_SECRET=<secret>
-#   4. Update OMNI_OIDC_CLIENT_ID below with your Forgejo app's client ID
+#   3. Seal the Omni GPG key secret: just seal-omni-gpg OMNI_GPG_KEY_FILE=/path/to/omni.asc
+#   4. Seal the OIDC client secret: just seal-omni OMNI_CLIENT_SECRET=<secret>
+#   5. Update OMNI_OIDC_CLIENT_ID below with your Forgejo app's client ID
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -81,7 +82,9 @@ spec:
           secret:
             secretName: omni-gpg-key
 ---
-# Generate with: gpg --batch --gen-key <(echo "Key-Type: RSA\nKey-Length: 4096\nSubkey-Type: RSA\nSubkey-Length: 4096\nName-Real: Omni\nExpire-Date: 0\n%no-passphrase") && gpg --armor --export-secret-keys Omni | kubectl create secret generic omni-gpg-key --namespace omni --from-file=omni.asc=/dev/stdin
+# Generate key with: gpg --batch --gen-key <(echo "Key-Type: RSA\nKey-Length: 4096\nSubkey-Type: RSA\nSubkey-Length: 4096\nName-Real: Omni\nExpire-Date: 0\n%no-passphrase")
+# Export key with:   gpg --armor --export-secret-keys Omni > omni.asc
+# Seal key with:     just seal-omni-gpg OMNI_GPG_KEY_FILE=./omni.asc
 # See: https://omni.siderolabs.com/docs/self-hosted/
 apiVersion: v1
 kind: PersistentVolumeClaim
