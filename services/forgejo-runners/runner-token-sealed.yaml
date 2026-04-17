@@ -1,9 +1,4 @@
-# PLACEHOLDER — replace with a real SealedSecret before committing.
-#
-# 1. Start Forgejo, log in, go to: Site Administration → Actions → Runners → Create Runner
-# 2. Copy the registration token
-# 3. Run: just seal-runner RUNNER_TOKEN=<token>
-#
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
@@ -11,7 +6,7 @@ metadata:
   namespace: forgejo-runners
 spec:
   encryptedData:
-    token: REPLACE_WITH_SEALED_VALUE
+    token: AgAZqmOaPrBk98XeeaU77n2Y0NGt7TS8yDouoIb3qEPpQBnfM9chjHqwox8LaQb01TR9f/Lnk4kacUysP8bk+b6tvyU78gniPXqEE5zYxPbsLDdJOhi4gFJNgLMzDw13V9xChBT/pJ08a8enm2PVXI13kkKnYnJWLCfqLfXDoEaaaPMB+bFR6chhv8d5M41+fl8lQU8kXkS/FtqLJPeVhW1FsEUbE58xRDHBpCExZwe15wlDdOcvw8Etn4uAc+8IToQZTK0jFbjBEms9lxmXyzOTW1RcAZCWzfEY06LCtm1YHcqclGjr2EpJiaRrTxWKLIe6nwYVzwG7R3eqd3LC13y3drwRc0VpB9Stvanr8aBSeKOEJ0PjPDAKu9a/kyCCPeAxv52s6ipgJL7EKJqb5uxHzOTNbL/LqiSeaygibMu9YRIIyiohnZcOn+/xHiV1cw0InttHzU1gd4w4g2MrCjfpJFUYC84ecuPbbnioNSNCeOD/44IiTBb/EGSe66sIDNoi6tm4DTYrPqpbLdCORpYsgLPnVP8hQiLEgrGuiRMYosGRZ8mRzXZxAxRIVua5tuKXFIVm/+T6muZxR1uCpF17mNdLVy18eeO2LzgQJRS33tesxwmkVPffWyzL4cfolNHrJzBJJHiJFDJrZkH1Y4IoULUGWp6/JguTuGEX0VZKQATCvmDKug0hYMLM4lKZ7kW+2PgmHgO2xbnVW5rLceLMFS4JMjdRF/hXyi1mHFFFsXBd3N0ee6rojgJE
   template:
     metadata:
       name: forgejo-runner-token
