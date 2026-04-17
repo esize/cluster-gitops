@@ -33,8 +33,8 @@ data:
   server.insecure: "true"
 ---
 # Ensure argocd-server actually rolls and applies insecure mode behind Traefik.
-# Using an explicit env var here avoids relying on a manual pod restart after
-# argocd-cmd-params-cm changes.
+# Keep this env var sourced from argocd-cmd-params-cm to avoid conflicts with
+# Argo CD's own Deployment defaults across versions.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,4 +50,9 @@ spec:
         - name: argocd-server
           env:
             - name: ARGOCD_SERVER_INSECURE
-              value: "true"
+              value: ""
+              valueFrom:
+                configMapKeyRef:
+                  name: argocd-cmd-params-cm
+                  key: server.insecure
+                  optional: true
