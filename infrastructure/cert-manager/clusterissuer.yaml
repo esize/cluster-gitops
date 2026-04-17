@@ -12,6 +12,8 @@ spec:
     solvers:
       - dns01:
           cloudflare:
+            # Secret value must be the raw Cloudflare API token string.
+            # Do not prefix it with "CF_TOKEN=".
             apiTokenSecretRef:
               name: cloudflare-api-token
               key: api-token
@@ -30,6 +32,8 @@ spec:
     solvers:
       - dns01:
           cloudflare:
+            # Secret value must be the raw Cloudflare API token string.
+            # Do not prefix it with "CF_TOKEN=".
             apiTokenSecretRef:
               name: cloudflare-api-token
               key: api-token
