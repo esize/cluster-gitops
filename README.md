@@ -21,6 +21,10 @@ GitOps repository for `cluster.wool.homes` — a 3-node Talos Linux cluster mana
 | Cert-Manager | TLS via Cloudflare DNS-01 | — |
 | Traefik | Ingress controller | `https://traefik.cluster.wool.homes` |
 | ArgoCD | GitOps controller | `https://argocd.cluster.wool.homes` |
+| kube-prometheus-stack | Cluster metrics + alerting | `https://prometheus.cluster.wool.homes` |
+| Grafana | Metrics/log dashboards | `https://grafana.cluster.wool.homes` |
+| Loki | Centralized log storage/query | — |
+| Promtail | Node/pod log shipping to Loki | — |
 | Forgejo | Self-hosted Git | `https://forgejo.cluster.wool.homes` |
 | Forgejo Runners | CI/CD | — |
 | Renovate | Dependency updates | — |
@@ -87,8 +91,8 @@ Wave  2  cert-manager
 Wave  3  cert-manager-config  (ClusterIssuers + Cloudflare secret)
 Wave  4  cert-manager-certs   (wildcard cert), traefik
 Wave  5  traefik-config, argocd-config
-Wave  6  forgejo, forgejo-config, omni
-Wave  7  renovate
+Wave  6  kube-prometheus-stack, loki, forgejo, forgejo-config, omni
+Wave  7  promtail, renovate
 Wave  8  forgejo-runners
 ```
 
